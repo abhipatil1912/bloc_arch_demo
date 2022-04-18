@@ -10,15 +10,15 @@ import '../../../core/dio/app_dio.dart';
 import '../../../core/dio/dio_exceptions.dart';
 import '../models/register_model.dart';
 
-abstract class AuthRepo {
+abstract class RegisterRepo {
   //? returns a raw auth data ( json string )
-  static Future<Either<String, RegisterModel>> register(
-    String name,
-    String mobile,
-  ) async {
-    // //fake api response
-    // await Future.delayed(const Duration(seconds: 2));
-    // return right(RegisterModel());
+  static Future<Either<String, RegisterModel>> register({
+    required String name,
+    required String mobile,
+  }) async {
+    //fake api response
+    await Future.delayed(const Duration(seconds: 2));
+    return right(RegisterModel());
 
     try {
       final data = {

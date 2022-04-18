@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:formz/formz.dart';
 
-import '../../core/functions/my_validators.dart';
-import '../bloc/auth_bloc.dart';
-import 'widgets/loader.dart';
+import '../bloc/register_bloc/register_bloc.dart';
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -17,28 +16,20 @@ class RegisterScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Center(
-          child: BlocConsumer<AuthBloc, AuthState>(
+          child: BlocListener<RegisterBloc, RegisterState>(
             listener: (context, state) {
-              if (state is AuthStateFailed) {
+              if (state.status == FormzStatus.submissionFailure) {
                 //? show error msg
                 ScaffoldMessenger.of(context)
                   ..hideCurrentSnackBar()
                   ..showSnackBar(
-                    SnackBar(
-                      content: Text(state.errorMsg),
+                    const SnackBar(
+                      content: Text("Authentication Failure"),
                     ),
                   );
               }
             },
-            builder: (context, state) {
-              if ((state is AuthStateInit) || (state is AuthStateFailed)) {
-                return _RegisterForm();
-              } else if (state is AuthStateLoading) {
-                return const Loader();
-              } else {
-                return const Text("Authenticated");
-              }
-            },
+            child: _RegisterForm(),
           ),
         ),
       ),
@@ -65,17 +56,7 @@ class _RegisterForm extends StatelessWidget {
           const Padding(padding: EdgeInsets.all(12)),
           _MobileInput(controller: _mobileController),
           const Padding(padding: EdgeInsets.all(12)),
-          _LoginButton(
-            onPressed: () {
-              final isValid = _formKey.currentState!.validate();
-              if (isValid) {
-                context.read<AuthBloc>().add(AuthSubmitted(
-                      mobile: _mobileController.text,
-                      userName: _nameController.text,
-                    ));
-              }
-            },
-          ),
+          const _LoginButton(),
         ],
       ),
     );
@@ -83,51 +64,68 @@ class _RegisterForm extends StatelessWidget {
 }
 
 class _UsernameInput extends StatelessWidget {
-  final TextEditingController _controller;
-
   const _UsernameInput({
     Key? key,
     required TextEditingController controller,
-  })  : _controller = controller,
-        super(key: key);
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: _controller,
-      validator: MyValidators.validateName,
-      decoration: const InputDecoration(labelText: 'Name'),
+    return BlocBuilder<RegisterBloc, RegisterState>(
+      builder: (context, state) {
+        return TextField(
+          onChanged: (username) => context
+              .read<RegisterBloc>()
+              .add(RegisterUsernameChanged(username)),
+          decoration: InputDecoration(
+            labelText: 'Name',
+            errorText: state.username.invalid ? 'Enter name' : null,
+          ),
+        );
+      },
     );
   }
 }
 
 class _MobileInput extends StatelessWidget {
-  final TextEditingController _controller;
-
   const _MobileInput({
     Key? key,
     required TextEditingController controller,
-  })  : _controller = controller,
-        super(key: key);
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: _controller,
-      validator: MyValidators.validateMobile,
-      decoration: const InputDecoration(labelText: 'Mobile'),
-      keyboardType: TextInputType.phone,
+    return BlocBuilder<RegisterBloc, RegisterState>(
+      builder: (context, state) {
+        return TextField(
+          onChanged: (password) =>
+              context.read<RegisterBloc>().add(RegisterMobileChanged(password)),
+          decoration: InputDecoration(
+            labelText: 'Mobile',
+            errorText: state.mobile.invalid ? 'Invalid mobile' : null,
+          ),
+          keyboardType: TextInputType.phone,
+        );
+      },
     );
   }
 }
 
 class _LoginButton extends StatelessWidget {
-  final VoidCallback onPressed;
-
-  const _LoginButton({Key? key, required this.onPressed}) : super(key: key);
+  const _LoginButton({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      child: const Text('Register'),
-      onPressed: onPressed,
+    return BlocBuilder<RegisterBloc, RegisterState>(
+      builder: (context, state) {
+        return state.status.isSubmissionInProgress
+            ? const CircularProgressIndicator()
+            : ElevatedButton(
+                child: const Text('Register'),
+                onPressed: state.status.isValidated
+                    ? () {
+                        context.read<RegisterBloc>().add(RegisterSubmitted());
+                      }
+                    : null,
+              );
+      },
     );
   }
 }
