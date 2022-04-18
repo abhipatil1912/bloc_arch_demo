@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../core/functions/my_validators.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import 'widgets/loader.dart';
@@ -94,6 +95,7 @@ class _UsernameInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: _controller,
+      validator: MyValidators.validateName,
       decoration: const InputDecoration(labelText: 'Name'),
     );
   }
@@ -111,6 +113,7 @@ class _MobileInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: _controller,
+      validator: MyValidators.validateMobile,
       decoration: const InputDecoration(labelText: 'Mobile'),
       keyboardType: TextInputType.phone,
     );
