@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'auth/cubit/auth_cubit.dart';
+import 'auth/bloc/auth_bloc.dart';
 import 'auth/view/register_screen.dart';
 
 void main() {
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       home: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (_) => AuthCubit(),
+            create: (_) => AuthBloc(),
           ),
         ],
         child: const RegisterScreen(),

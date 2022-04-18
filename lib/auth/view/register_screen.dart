@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/functions/my_validators.dart';
-import '../cubit/auth_cubit.dart';
-import '../cubit/auth_state.dart';
+import '../bloc/auth_bloc.dart';
 import 'widgets/loader.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -18,7 +17,7 @@ class RegisterScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Center(
-          child: BlocConsumer<AuthCubit, AuthState>(
+          child: BlocConsumer<AuthBloc, AuthState>(
             listener: (context, state) {
               if (state is AuthStateFailed) {
                 //? show error msg
@@ -70,10 +69,10 @@ class _RegisterForm extends StatelessWidget {
             onPressed: () {
               final isValid = _formKey.currentState!.validate();
               if (isValid) {
-                context.read<AuthCubit>().register(
-                      _nameController.text,
-                      _mobileController.text,
-                    );
+                context.read<AuthBloc>().add(AuthSubmitted(
+                      mobile: _mobileController.text,
+                      userName: _nameController.text,
+                    ));
               }
             },
           ),

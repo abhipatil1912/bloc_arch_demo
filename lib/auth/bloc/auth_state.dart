@@ -1,4 +1,4 @@
-import '../data/models/register_model.dart';
+part of 'auth_bloc.dart';
 
 abstract class AuthState {}
 
