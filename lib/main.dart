@@ -4,7 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'auth/bloc/auth_bloc/auth_bloc.dart';
 import 'auth/bloc/register_bloc/register_bloc.dart';
 import 'auth/view/register_screen.dart';
-import 'home/home_screen.dart';
+import 'home/bloc/user_bloc/user_bloc.dart';
+import 'home/view/home_screen.dart';
 import 'splash/splash_screen.dart';
 
 void main() {
@@ -29,6 +30,9 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider(
             create: (_) => AuthBloc(registerBloc),
+          ),
+          BlocProvider(
+            create: (_) => UserBloc(),
           ),
         ],
         child: const App(),
@@ -55,7 +59,7 @@ class _AppState extends State<App> {
   Future<void> checkAndUpdateAuthStatus() async {
     // pretending to read the token from local storage
     await Future.delayed(const Duration(seconds: 1));
-    context.read<AuthBloc>().add(AuthStateChanged(AuthState.unauthenticated));
+    context.read<AuthBloc>().add(AuthStateChanged(AuthState.authenticated));
   }
 
   @override

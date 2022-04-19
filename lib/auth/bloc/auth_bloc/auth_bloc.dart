@@ -1,8 +1,9 @@
 import 'dart:async';
 
-import 'package:bloc_arch_demo/auth/bloc/register_bloc/register_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
+
+import '../register_bloc/register_bloc.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';

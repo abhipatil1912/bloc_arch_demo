@@ -11,7 +11,7 @@ import '../../../core/dio/dio_exceptions.dart';
 import '../models/register_model.dart';
 
 abstract class RegisterRepo {
-  //? returns a raw auth data ( json string )
+  //? returns a either type of error msg or register model data ( json string )
   static Future<Either<String, RegisterModel>> register({
     required String name,
     required String mobile,
